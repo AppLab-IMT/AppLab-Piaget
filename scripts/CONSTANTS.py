@@ -1,0 +1,1 @@
+PATH_IMAGES = "assets/images/"
