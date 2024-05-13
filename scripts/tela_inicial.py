@@ -3,10 +3,10 @@ from PIL import Image, ImageTk
 
 from CONSTANTS import PATH_IMAGES
 from helpers import trata_imagem, render_imagem
-from clickRouter import rootLogin, rootMatricula
+from clickRouter import rootLogin, rootMatricula, rootLoguear
 
-def tela_inicial():
-    root = tk.Tk()
+def tela_inicial(root):
+
     root.geometry("500x700")
     root.resizable(width=False, height=False)
     root.config(bg="orange")
@@ -30,15 +30,14 @@ def tela_inicial():
     label_characters = tk.Label(root, image=img03, bg="#010F28")
     label_characters.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-    btn_root_login = tk.Button(command=rootLogin)
-    btn_root_login.configure(bg="#9AFF96", fg="BLACK", text="Login", font=("Poppins", 22))
-    btn_root_login.place(relx=0.3, rely=0.8, anchor=tk.CENTER,  height=50, width=190)
+    btn_root_loguear = tk.Button(root)
+    btn_root_loguear.configure(bg="#9AFF96", fg="BLACK", text="Entrar", font=("Poppins", 22))
+    btn_root_loguear.place(relx=0.3, rely=0.8, anchor=tk.CENTER,  height=50, width=190)
 
-    btn_root_matricula = tk.Button(command=rootMatricula)
+    btn_root_matricula = tk.Button(root)
     btn_root_matricula.configure(bg="#CEFFFC", fg="BLACK", text="Matricula", font=("Poppins", 22))
     btn_root_matricula.place(relx=0.72, rely=0.8, anchor=tk.CENTER,  height=50, width=190)
 
     root.mainloop()
 
 
-tela_inicial()
