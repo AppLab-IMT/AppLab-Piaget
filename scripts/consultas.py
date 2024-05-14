@@ -1,29 +1,23 @@
-# Código 3
-
+import sqlite3
 from db import db
 
-def consulta_jogador(email_institucional):
-    consulta = """SELECT usuarios.id, usuarios.email_institucional, usuarios.username, score_total.total_score
-                    FROM usuarios
-                    INNER JOIN usuarios_estudante
-                        ON usuarios_estudante.usuarios_id = usuarios.id
-                    RIGHT JOIN score_total
-                        ON score_total.usuarios_id_estudante = usuarios_estudante.id
-                    WHERE  usuarios.email_institucional = {email_institucional} 
-                    ORDER BY score_total.total_score DESC;"""
-    consulta_efetuada = db(consulta, (email_institucional))
-    if consulta_efetuada:
-        return consulta_efetuada
-    else:
-        return False
-        
+def search_user_by_email_institucional(email_institucional):
+    consulta = f"SELECT password, role FROM usuarios WHERE email_institucional = ?;"
+    exC = db(consulta, (email_institucional,))
+    return exC
 
-def consulta_profile_e_senha(email_institucional, input_password):
-    consulta = """SELECT usuarios.email_institucional, usuarios.password, usuarios.role 
-                   FROM usuarios 
-                   where email_institucional = {email_institucional};"""
-    consulta_efetuada = db(consulta(email_institucional))
-    if consulta_efetuada:
-        return consulta_efetuada
-    else:
-        return False
+def search_user_data_by_email(email_institucional):
+    consulta = """SELECT 
+    usuarios.id,
+    usuarios.email_institucional,
+    usuarios.username,
+    usuarios.role,
+    score_total.total_score,
+    score_total.usuario_id_estudante
+    FROM usuarios
+    INNER JOIN usuario_estudante ON usuario_estudante.usuario_id = usuarios.id
+    RIGHT JOIN score_total ON score_total.usuario_id_estudante = usuario_estudante.id
+    WHERE email_institucional = ?
+    ORDER BY score_total.total_score DESC"""
+    exC = db(consulta, (email_institucional,))
+    return exC
