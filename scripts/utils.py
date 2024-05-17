@@ -36,4 +36,6 @@ def check_role_by_email(email):
         return "E-MAIL INVALIDO"
 
 
-    
+def to_caixa_baixa(args):
+    return args.casefold()
+

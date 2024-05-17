@@ -1,14 +1,14 @@
 import tkinter as tk
-from tkinter import ttk  # Importe ttk para usar o Combobox
-
+from tkinter import ttk 
 from db import db
 from utils import render_imagem, trata_imagem, check_role_by_email  
+from validators import validate_input_email
 
 def t04():
     BLUE_BG = "#00102A"
     root = tk.Tk()
     root.geometry("500x700")
-    root.title("Cadastrar Estudante")
+    root.title("Cadastrar na AppLab")
     root.resizable(False, False)
     root.config(bg=BLUE_BG)
     
@@ -54,32 +54,13 @@ def t04():
     marco_recovery_question.place(relx=0.5 ,rely=0.60, anchor=tk.CENTER)
         
     # Pergunta
-    label_recovery_question = tk.Label(marco_recovery_question, text="Pergunta para recuperar senha: ", font=("Comic Sans", 10, "bold"))
+    label_recovery_question = tk.Label(marco_recovery_question, text="Documento para recuperacao de conta", font=("Comic Sans", 10, "bold"))
     label_recovery_question.grid(row=0, column=0, sticky='e', padx=5, pady=8)
-    recovery_question = ttk.Combobox(marco_recovery_question, values=["Nome do seu PET?", "Nome da sua mãe?", "Cidade de nascimento?", "Time de Futebol Favorito?"])
+    recovery_question = ttk.Combobox(marco_recovery_question, values=["Registro Estudantil - RE", "Registro Professor - RP", "Registro Administrativo - RA"], width=30)
     recovery_question.current(0)
     recovery_question.grid(row=0, column=1, padx=5, pady=8)
 
     label_recovery_answer = tk.Label(marco_recovery_question, text="Resposta escolhida: ", font=("Comic Sans", 10, "bold"))
-    label_recovery_answer.grid(row=1, column=0, sticky='e', padx=5, pady=8)
-    recovery_answer = tk.Entry(marco_recovery_question, width=33)
-    recovery_answer.grid(row=1, column=1, padx=5, pady=8)        
-    
-    label_advice = tk.Label(marco_recovery_question, text="*A resposta inserida será sua chave de recuperação!", font=("Comic Sans", 9, "bold"), foreground="blue")
-    label_advice.grid(row=2, column=0, columnspan=2, sticky='e', padx=5, pady=8)
-    
-    btn_submit = tk.Button(root, text="Voltar")
-    btn_submit.configure(bg="#FFF496", fg="BLACK", font=("Poppins", 22))
-    btn_submit.place(relx=0.3, rely=0.80, anchor=tk.CENTER, height=50, width=190)
-    
-    btn_delete = tk.Button(root, text="Cancelar")
-    btn_delete.configure(bg="#FFAF96", fg="BLACK", font=("Poppins", 22))
-    btn_delete.place(relx=0.7, rely=0.80, anchor=tk.CENTER, height=50, width=190)
-    
-    btn_voltar = tk.Button(root, text="Cadastrar")
-    btn_voltar.configure(bg="#9AFF96", fg="BLACK", font=("Poppins", 22))
-    btn_voltar.place(relx=0.5, rely=0.90, anchor=tk.CENTER, height=50, width=190)
-        
-    root.mainloop()
-   
+
+
 t04()
