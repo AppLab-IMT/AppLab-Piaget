@@ -13,7 +13,7 @@ def validate_input_email(email, password, question, answer, responsable=""):
         id = str(uuid4())
         email_institucional = lower_email
         username = get_username(lower_email)
-        password_hash = get_password(password)
+        password_hash =get_password(password)
         
         data_list = [id, email_institucional, username, password_hash, question, answer, admin_keys[2]]
         insert_new_user(data_list)
@@ -39,6 +39,7 @@ def validate_input_email(email, password, question, answer, responsable=""):
         username = get_username(lower_email)
         password_hash = get_password(password)
         
+        
         data_list = [id, email_institucional, username, password_hash, question, answer, teacher_keys[2]]
         if responsable:
             insert_new_user(data_list)
@@ -49,7 +50,7 @@ def validate_input_email(email, password, question, answer, responsable=""):
 
     
 def get_password(password):
-    if len(password) < 12 and len(password) > 6 and not password.count('*'):
+    if len(password) < 12 and len(password) > 4 and not password.count('!'):
         return hasheando(password)
     else:
         return 'ERROR PASSWORD'

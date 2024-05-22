@@ -7,6 +7,11 @@ def switch_to_login(root):
     from t02 import t02
     t02()
 
+def switch_to_register(root):
+    root.destroy()
+    from t04 import t04
+    t04()
+
 def t01():
     root = tk.Tk()
     root.geometry("500x700")
@@ -42,7 +47,7 @@ def t01():
     btn_root_loguear.place(relx=0.3, rely=0.8, anchor=tk.CENTER, height=50, width=190)
     
     btn_root_cadastro = tk.Button(root)
-    btn_root_cadastro.configure(bg="#CEFFFC", fg="BLACK", text="Matricula", font=("Poppins", 22))
+    btn_root_cadastro.configure(bg="#CEFFFC", fg="BLACK", text="Matricula", font=("Poppins", 22) ,command=lambda: switch_to_register(root))
     btn_root_cadastro.place(relx=0.72, rely=0.8, anchor=tk.CENTER,  height=50, width=190)
     
     root.mainloop()

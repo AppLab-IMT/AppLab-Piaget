@@ -11,3 +11,4 @@ def rainbow(hasheado, password_input):
         return True
     else:
         return False
+

@@ -5,18 +5,26 @@ import os
 class QuizApp:
     def __init__(self, master):
         self.db_name = os.path.join(os.path.dirname(__file__), "..",  "data", "database.db")
+        self.DARKBLUE = "#476475"
+        self.img_path = os.path.join(os.path.dirname(__file__), "..",  "assets", "images", "bg01.png")
+
         self.master = master
         self.master.title("Quiz")
-        self.master.geometry("500x700")
+        self.master.geometry("550x700")
+        self.master.configure(bg="#476475")
+        self.master.resizable(width=False, height=False)
+        
 
         self.current_question_index = 0
         self.score = 0
 
         self.perguntas = self.puxar_perguntas()
         self.label_pergunta = tk.Label(self.master, text="", wraplength=450)
+        self.label_pergunta.configure(bg="ORANGE")
         self.label_pergunta.pack(pady=10)
 
         self.respostas_frame = tk.Frame(self.master)
+        self.respostas_frame.configure(bg="ORANGE")
         self.respostas_frame.pack(pady=10)
 
         self.botao_resposta1 = tk.Button(self.respostas_frame, text="", command=lambda: self.check_answer(0))

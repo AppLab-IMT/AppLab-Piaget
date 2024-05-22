@@ -14,11 +14,11 @@ CREATE TABLE usuarios(
 INSERT INTO usuarios(
     id, email_institucional, username, password, recovery_question, recovery_answer, role
 ) VALUES (
-    "cdb0660a-ed92-49c8-bb08-f77523428a67", "estudante@jpiaget.g12.br", "estudante-teste", "Abc123!", "Nome do seu PET?", "PET-ESTUDANTE", "ESTUDANTES"
+    "cdb0660a-ed92-49c8-bb08-f77523428a67", "estudante.teste@jpiaget.g12.br", "estudante-teste", "!AAUG!*321cbA!AAUG!", "Nome do seu PET?", "PET-ESTUDANTE", "ESTUDANTES"
 ),(
-    "4ca064c7-3df0-4c27-b670-b8928c431f82", "admin@jpiaget.com.br", "admin-teste", "Abc123!", "Nome do seu PET?", "PET-ADMINISTRADOR", "ADMINISTRADORES"
+    "4ca064c7-3df0-4c27-b670-b8928c431f82", "admin.teste@jpiaget.com.br", "admin-teste", "!AAUG!*321cbA!AAUG!", "Nome do seu PET?", "PET-ADMINISTRADOR", "ADMINISTRADORES"
 ),(
-    "c4697db7-876c-4323-9f21-2bad9d675ba1", "professor@jpiaget.pro.br", "pro-teste", "Abc123!", "Nome do seu PET?", "PET-PROFESSOR", "PROFESSORES"
+    "c4697db7-876c-4323-9f21-2bad9d675ba1", "pro.teste@jpiaget.pro.br", "pro-teste", "!AAUG!*321cbA!AAUG!!", "Nome do seu PET?", "PET-PROFESSOR", "PROFESSORES"
 );
 
 SELECT * FROM usuarios;
@@ -403,7 +403,7 @@ INNER JOIN usuario_estudante ON usuario_estudante.usuario_id = usuarios.id
 RIGHT JOIN score_total ON score_total.usuario_id_estudante = usuario_estudante.id 
 WHERE usuario_estudante.is_active = 1
 ORDER BY score_total.total_score DESC;
-SELECT * FROM USUARIOS; 
+SELECT * FROM usuarios; 
 
 SELECT * FROM score_total;
 SELECT * FROM questoes_verdadeiro_ou_falso ORDER BY updated_at DESC LIMIT 5;
