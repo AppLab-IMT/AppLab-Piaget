@@ -36,4 +36,18 @@ def check_role_by_email(email):
         return "E-MAIL INVALIDO"
 
 
-    
+def to_caixa_baixa(args):
+    return args.casefold()
+
+def wrap_text( text, max_words=15):
+    words = text.split()
+    wrapped_lines = []
+    current_line = []
+    for word in words:
+        current_line.append(word)
+        if len(current_line) >= max_words:
+            wrapped_lines.append(" ".join(current_line))
+            current_line = []
+    if current_line:
+        wrapped_lines.append(" ".join(current_line))
+        return wrapped_lines

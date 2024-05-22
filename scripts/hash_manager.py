@@ -6,8 +6,9 @@ def hasheando(password):
 
 def rainbow(hasheado, password_input):
     list_hash = hasheado.split("!AAUG!")
-    hash_inverso = list_hash[1][::-1]  # Invertendo a hash para comparar corretamente
+    hash_inverso = list_hash[1][::-1]
     if hash_inverso == password_input:
         return True
     else:
         return False
+

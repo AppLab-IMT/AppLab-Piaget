@@ -5,6 +5,12 @@ from consultas import search_user_by_email_institucional, search_user_data_by_em
 from hash_manager import rainbow
 from t03 import t03
 
+
+def switch_to_profile(root, userData):
+    root.destroy()
+    from t03 import t03
+    t03(userData)
+
 def check_credentials(email_institucional, password, root):
     user_tupla = search_user_by_email_institucional(email_institucional)
     if user_tupla:
@@ -15,7 +21,7 @@ def check_credentials(email_institucional, password, root):
         if digestHashP:
             consulta2 = search_user_data_by_email(emailP)
             lista_consulta = separa_tupla_em_lista(consulta2)
-            render_t03(root, lista_consulta)
+            switch_to_profile(root, lista_consulta)
         else:
             messagebox.showerror("Erro", "Email ou senha inválidos")
     else:
