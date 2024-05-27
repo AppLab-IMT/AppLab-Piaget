@@ -7,8 +7,13 @@ from sistemaCadastro import SistemaCadastro
 from hash_manager import hasheando  # Assuming hasheando is a required function
 from utils import render_imagem, trata_imagem  # Assuming these functions are correctly defined in utils module
 from sistemaChoices import SistemaChoices
+from sistemaTF import SistemaTF
 import os
-
+def marca_correta(value):
+    if value == "VERDADEIRO":
+        return 1
+    else:
+        return 0
 class TemplateBase:
     def __init__(self):
         self.root = None
@@ -17,6 +22,7 @@ class TemplateBase:
         DARK_BLUE = "#242231"
 
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "bg02.png")
+        PATH_ICO = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "favicon.ico")
         
         self.root = tk.Tk()
         self.root.geometry("500x500")
@@ -24,6 +30,7 @@ class TemplateBase:
         self.root.configure(bg=DARK_BLUE)
         self.imgTratada = trata_imagem(PATH1, 500, 500)
         self.imgRenderizada = render_imagem(self.imgTratada)
+        self.root.iconbitmap(PATH_ICO)
         
         self.label_bg = tk.Label(self.root, image=self.imgRenderizada, bg=DARK_BLUE)
         self.label_bg.place(x=0, y=0)
@@ -40,6 +47,7 @@ class TemplateBase:
     
     def buildHomePage(self):
         self.buildTemplateBase()
+        self.root.title('AppLab')
         DARK_BLUE = "#242231"
 
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title0.png")
@@ -55,9 +63,9 @@ class TemplateBase:
         self.grid_area_3 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         self.grid_area_4 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         
-        self.btn_login = tk.Button(self.grid_area_1, text="Login")
-        self.btn_registerStudent = tk.Button(self.grid_area_1, text="Matricula", command=lambda: self.goToRegisterStudent())
-        self.btn_project = tk.Button(self.grid_area_1, text="O Projeto", command=lambda: self.goToHome())
+        self.btn_login = tk.Button(self.grid_area_1, text="Login" , width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToLogin())
+        self.btn_registerStudent = tk.Button(self.grid_area_1, text="Matricula",  width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToRegisterStudent())
+        self.btn_project = tk.Button(self.grid_area_1, text="O Projeto", width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToHome())
         
         self.label_image = tk.Label(self.grid_area_3, image=self.img1Renderizada, bg=DARK_BLUE)
         self.label_title = tk.Label(self.grid_area_2, image=self.titleRenderizada, bg=DARK_BLUE)
@@ -84,9 +92,9 @@ class TemplateBase:
 
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title2.png")
         PATH2 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "logo.png")
-        self.img1Tratada = trata_imagem(PATH2, 250, 250)
+        self.img1Tratada = trata_imagem(PATH2, 250, 50)
         self.img1Renderizada = render_imagem(self.img1Tratada)
-        self.titleTratada = trata_imagem(PATH1, 250, 50)
+        self.titleTratada = trata_imagem(PATH1, 200, 50)
         self.titleRenderizada = render_imagem(self.titleTratada)
         
         self.grid_container = tk.Frame(self.root, bg=DARK_BLUE)
@@ -96,17 +104,17 @@ class TemplateBase:
         self.grid_area_4 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         
 
-        self.btn_registerStudent = tk.Button(self.grid_area_1, text="Matricula", command=lambda: self.goToRegisterStudent())
-        self.btn_project = tk.Button(self.grid_area_1, text="O Projeto", command=lambda: self.goToHome())
+        self.btn_registerStudent = tk.Button(self.grid_area_1, text="Matricula",  width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToRegisterStudent())
+        self.btn_project = tk.Button(self.grid_area_1, text="AppLab",  width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToHome())
         
         self.label_title = tk.Label(self.grid_area_2, image=self.titleRenderizada, bg=DARK_BLUE)
-        self.label_email_institucional = tk.Label(self.grid_area_3, text='Email institucional')
-        self.label_password = tk.Label(self.grid_area_3, text='Senha Usuário')
+        self.label_email_institucional = tk.Label(self.grid_area_3, text='Email institucional', bg=DARK_BLUE, fg="ORANGE")
+        self.label_password = tk.Label(self.grid_area_3, text='Senha Usuário' , bg=DARK_BLUE, fg="ORANGE")
         
         self.input_email_institucional = tk.Entry(self.grid_area_3)
         self.input_password = tk.Entry(self.grid_area_3, show="*")
         
-        self.btn_login = tk.Button(self.grid_area_3, text="Login", command=lambda: self.pressLogin(self.input_email_institucional.get(), self.input_password.get()))
+        self.btn_login = tk.Button(self.grid_area_3, text="Login",  width=10, height=1, bg="GREENYELLOW", border=None, fg=DARK_BLUE, command=lambda: self.pressLogin(self.input_email_institucional.get(), self.input_password.get()))
         
         self.grid_container.place(relx=0.1, rely=0.12, relwidth=0.8, relheight=0.75)
         self.grid_area_1.place(relx=0, rely=0, relwidth=0.3, relheight=1)
@@ -479,7 +487,7 @@ class TemplateBase:
     def buildAddTrueOrFalse(self, idTeacher):
         self.buildTemplateBase()
         DARK_BLUE = "#242231"
-
+        self.idTeacher = idTeacher
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title5.png")
         self.titleTratada = trata_imagem(PATH1, 200, 40)
         self.titleRenderizada = render_imagem(self.titleTratada)
@@ -500,7 +508,11 @@ class TemplateBase:
         self.label_explicacao  = tk.Label(self.grid_area_3, text="Explicação da Resposta:", bg=DARK_BLUE, fg="ORANGE", font=("Comic Sans", 10, "bold"))
         self.input_explicacao = tk.Entry(self.grid_area_3)
         
-        self.btn_saveTF = tk.Button(self.grid_area_3, text="SALVAR", bg="ORANGE", fg=DARK_BLUE, font=("Comic Sans", 14, "bold"), command=lambda: self.saveTrueOrFalse(idTeacher, self.input_enunciado.get(), self.answer.get(), self.input_explicacao.get()))
+        self.btn_saveTF = tk.Button(self.grid_area_3, text="SALVAR", bg="ORANGE", fg=DARK_BLUE, font=("Comic Sans", 14, "bold"), command=lambda: self.saveTrueOrFalse(self,
+                        self.idTeacher,
+                        self.input_enunciado.get(),
+                        self.answer.get(),
+                        self.input_explicacao.get()))
         
                 
         self.grid_container.place(relx=0.1, rely=0.12, relwidth=0.8, relheight=0.75)
@@ -694,7 +706,7 @@ class TemplateBase:
     def goToLogin(self):
         self.root.destroy()
         self.template = TemplateBase()
-        self.template.builLoginPage()     
+        self.template.buildLoginPage()     
         
     def saveChoice(self, enunciado, alternativa_a, alternativa_b, alternativa_c, alternativa_d, alternativa_e, input_correct, explicacao, idTeacher):
         newChoice = [
@@ -737,12 +749,12 @@ class TemplateBase:
             ]
 
         if '' in newTF:
-            messagebox.showerror('Error', 'Todos os campos devem estar preenchidos')
-            
-            sistema = SistemaTF(newTF[0], newTF[1], newTF[2], newTF[3])
+            return messagebox.showerror('Error', 'Todos os campos devem estar preenchidos')
+        else:    
+            sistema = SistemaTF(newTF[0], newTF[1], newTF[2])
 
             try:
-                sistema.insert_new_choice(db, usuario_professor_id=newChoice[-1])
+                sistema.insert_new_TF(db, usuario_professor_id=newTF[-1])
                 messagebox.showinfo('Sucesso', 'Escolha salva com sucesso!')
             except Exception as e:
                 messagebox.showerror('Error', f'Erro ao salvar escolha: {str(e)}')
@@ -750,9 +762,5 @@ class TemplateBase:
     
 # Example usage
 template = TemplateBase()
-template.buildAddChoices("c4697db7-876c-4323-9f21-2bad9d675ba1")
-def marca_correta(value):
-    if value == "VERDADEIRO":
-        return 1
-    else:
-        return 0
+#template.buildAddTrueOrFalse("c4697db7-876c-4323-9f21-2bad9d675ba1")
+template.buildHomePage()
