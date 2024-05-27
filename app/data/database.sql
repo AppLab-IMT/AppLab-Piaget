@@ -10,7 +10,7 @@ CREATE TABLE usuarios(
     role TEXT NOT NULL DEFAULT "ESTUDANTES"
 );
 
-
+SELECT * FROM usuarios;
 INSERT INTO usuarios(
     id, email_institucional, username, password, recovery_question, recovery_answer, role
 ) VALUES (
@@ -421,3 +421,14 @@ FROM usuarios
 ORDER BY score_total.total_score DESC;
 
 SELECT * FROM usuario_estudante;
+
+
+SELECT usuarios.id,
+    usuarios.email_institucional,
+    usuarios.username,
+    score_total.total_score,
+    score_total.usuario_id_estudante
+FROM usuarios
+    INNER JOIN usuario_estudante ON usuario_estudante.usuario_id = usuarios.id
+    RIGHT JOIN score_total ON score_total.usuario_id_estudante = usuario_estudante.id
+WHERE usuarios.id = "cdb0660a-ed92-49c8-bb08-f77523428a67";

@@ -27,6 +27,9 @@ class User:
         else:
             return hashlib.sha256(self.password.encode()).hexdigest()
 
+    
+    
+    
     def generateRecoveryQuestion(self):
         if self.email_institucional.endswith('@jpiaget.g12.br'):
             return 'RE'

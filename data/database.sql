@@ -70,8 +70,8 @@ INSERT INTO usuario_estudante(
     id, usuario_id, is_active
 ) VALUES (
     "ade34344-e1af-49da-89bc-51be535a8efa",
-    1,
-    "cdb0660a-ed92-49c8-bb08-f77523428a67"
+    "cdb0660a-ed92-49c8-bb08-f77523428a67", 
+    1
 );
 
 CREATE TABLE score_total (
@@ -85,7 +85,7 @@ CREATE TABLE score_total (
 INSERT INTO score_total(
     id, total_score, usuario_id_estudante
 ) VALUES (
-    "f9febab1-3e97-4c63-8bbd-11695586518d",0, "ade34344-e1af-49da-89bc-51be535a8efa"
+    "f9febab1-3e97-4c63-8bbd-11695586518d",   100, "ade34344-e1af-49da-89bc-51be535a8efa"
 )
 
 
@@ -360,7 +360,7 @@ SELECT * FROM usuario_professor;
 
 SELECT * FROM usuario_estudante;
 
-SELECT * FROM score_total;
+DROP TABLE score_total;
 
 DROP TABLE usuarios;
 
@@ -371,8 +371,7 @@ DROP TABLE usuarios;
 DROP TABLE score_total;
 
 DROP TABLE fase_jogo;
-
-SELECT * FROM questoes_choice;
+DROP TABLE questoes_choice;
 
 DROP TABLE questoes_verdadeiro_ou_falso;
 

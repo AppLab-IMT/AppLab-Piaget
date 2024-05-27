@@ -1,11 +1,18 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
+
+from networkx import goldberg_radzik
+from sistemaRanking import SistemaRanking
 from sistemaLogin import SistemaLogin
 from db import db
+import tkinter as tk
+from tkinter import END, BOTH, YES
+from utils import trata_imagem, render_imagem
+
 from sistemaCadastro import SistemaCadastro
 from hash_manager import hasheando  # Assuming hasheando is a required function
-from utils import render_imagem, trata_imagem  # Assuming these functions are correctly defined in utils module
+from utils import render_imagem, trata_imagem, separa_tupla_em_lista  # Assuming these functions are correctly defined in utils module
 from sistemaChoices import SistemaChoices
 from sistemaTF import SistemaTF
 import os
@@ -89,6 +96,11 @@ class TemplateBase:
     def buildLoginPage(self):
         self.buildTemplateBase()
         DARK_BLUE = "#242231"
+        
+        
+        
+        
+        
 
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title2.png")
         PATH2 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "logo.png")
@@ -139,7 +151,6 @@ class TemplateBase:
         
     def buildStudentRegister(self):
         self.buildTemplateBase()
-        
         DARK_BLUE = "#242231"
 
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title1.png")
@@ -357,6 +368,7 @@ class TemplateBase:
     # /***************************************PROFILE ADMIN***********************************/
     
     def buildProfileAdmin(self, idAdmin):
+        self.idAdmin = idAdmin
         self.buildTemplateBase()
         DARK_BLUE = "#242231"
 
@@ -374,9 +386,8 @@ class TemplateBase:
         self.grid_area_4 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         
         self.btn_ranking = tk.Button(self.grid_area_1, text="RANKING" , width=10 , height=1, bg="ORANGE")
-        self.btn_v_ou_f = tk.Button(self.grid_area_1, text="V-F QUIZ" , width=10, height=1 , bg="ORANGE")
-        self.btn_quiz = tk.Button(self.grid_area_1, text="CHOICES", width=10, height=1, bg="ORANGE")
-        self.btn_interativo = tk.Button(self.grid_area_1, text="CHOICES", width=10, height=1, bg="ORANGE")
+        self.btn_cadastrar_professores = tk.Button(self.grid_area_1, text="+Professores" , width=10, height=1 , bg="ORANGE", command=lambda: self.goToRegisterTeacher(idAdmin))
+        self.btn_cadastrar_admin = tk.Button(self.grid_area_1, text="+Admin", width=10, height=1, bg="ORANGE", command=lambda: self.goToRegisterAdmin(idAdmin))
 
         
         self.label_image = tk.Label(self.grid_area_3, image=self.img1Renderizada, bg=DARK_BLUE)
@@ -384,9 +395,8 @@ class TemplateBase:
        
         self.grid_container.place(relx=0.1, rely=0.12, relwidth=0.8, relheight=0.75)
         self.grid_area_1.place(relx=0, rely=0, relwidth=0.3, relheight=1)
-        self.btn_v_ou_f.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
-        self.btn_quiz.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
-        self.btn_interativo.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+        self.btn_cadastrar_professores.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
+        self.btn_cadastrar_admin.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
         self.btn_ranking.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
         self.grid_area_2.place(relx=0.3, rely=0, relwidth=0.7, relheight=0.3)  
@@ -440,6 +450,7 @@ class TemplateBase:
            
         self.root.mainloop()    
     
+    
     def buildRanking(self):
         self.buildTemplateBase()
         DARK_BLUE = "#242231"
@@ -457,11 +468,12 @@ class TemplateBase:
         self.grid_area_3 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         
         self.grid_container.place(relx=0.1, rely=0.12, relwidth=0.8, relheight=0.75)
+        
         self.grid_area_1.place(relx=0, rely=0, relwidth=0.3, relheight=1)
-        self.grid_area_2.place(relx=0.3, rely=0, relwidth=0.7, relheight=0.3)  
-        self.grid_area_3.place(relx=0.3, rely=0.3, relwidth=0.7, relheight=0.7) 
-        self.root.mainloop()    
-
+        self.grid_area_2.place(relx=0.3, rely=0, relwidth=0.7, relheight=0.3)
+        self.grid_area_3.place(relx=0.3, rely=0.3, relwidth=0.7, relheight=0.7)
+        
+        self.root.mainloop()
     def buildTrueOrFalse(self):
         self.buildTemplateBase()
         DARK_BLUE = "#242231"
@@ -647,23 +659,36 @@ class TemplateBase:
                 return messagebox.showerror('ERROR', 'Erro ao registrar usuario')
     
     def pressLogin(self, d1, d2):
-        email_institucional = d1
-        password = d2
-        if email_institucional == '' or password == '':
+        self.email_institucional = d1
+        self.password = hasheando(d2)
+        self.key_admin = '@jpiaget.com.br'
+        self.key_student = '@jpiaget.g12.br'
+        self.key_teacher = '@jpiaget.pro.br'
+        if self.email_institucional == '' or self.password == '':
             return messagebox.showerror('Erro', 'Todos os campos devem estar preenchidos')
         else:
-            key_admin = "@jpiaget.com.br"
-            key_student = "@jpiaget.g12.com"
-            key_teacher = "@jpiaget.pro.br"
-            if email_institucional.endswith(key_admin):
-                user_check = SistemaLogin(email_institucional, password)
-                userData = user_check.checkLoginStudent()
-                return userData
-                return "ADMINISTRADOR"
-            elif email_institucional.endswith(key_student):
-                return "ESTUDANTES"
-            elif email_institucional.endswith(key_teacher):
-                return "PROFESSORES"
+            if self.email_institucional.endswith(self.key_admin):
+                sL = SistemaLogin()
+                if sL.checkLoginStudent(db, self.email_institucional, self.password):
+                    id = sL.checkIdUser(db, self.email_institucional)
+                    return self.goToProfileAdmin(id)
+                else:
+                    return  messagebox.showerror('Erro', 'Senha inválidos')	 
+                
+            elif self.email_institucional.endswith(self.key_student):
+                sL = SistemaLogin()
+                if sL.checkLoginStudent(db, self.email_institucional, self.password):
+                    id = sL.checkIdUser(db, self.email_institucional)
+                    return self.goToProfileStudent(id)
+                else:
+                    return  messagebox.showerror('Erro', 'Senha inválidos')	    
+            elif self.email_institucional.endswith(self.key_teacher):
+                sL = SistemaLogin()
+                if sL.checkLoginStudent(db, self.email_institucional, self.password):
+                    id = sL.checkIdUser(db, self.email_institucional)
+                    return self.goToProfileTeacher(id)
+                else:
+                    return  messagebox.showerror('Erro', 'Senha inválidos')	 
             else:
                 return messagebox.showerror('Erro', 'Email ou senha inválidos')
             
@@ -685,6 +710,7 @@ class TemplateBase:
         
     def goToRegisterTeacher(self, idAdmin):
         self.root.destroy()
+        self.template = TemplateBase()
         self.template.buildTeacherRegister(idAdmin)
         
     def goToProfileStudent(self, idStudent):
