@@ -21,6 +21,8 @@ INSERT INTO usuarios(
     "c4697db7-876c-4323-9f21-2bad9d675ba1", "pro.teste@jpiaget.pro.br", "pro-teste", "!AAUG!*321cbA!AAUG!!", "Registro Professor - RP", "PROF-24-00013", "PROFESSORES"
 );
 
+SELECT * FROM questoes_verdadeiro_ou_falso ;
+
 SELECT * FROM usuarios;
 CREATE TABLE usuario_admin (
     id TEXT NOT NULL PRIMARY KEY UNIQUE,
@@ -370,7 +372,7 @@ DROP TABLE usuario_estudante;
 DROP TABLE usuarios;
 DROP TABLE score_total;
 
-DROP TABLE fase_jogo;
+SELECT * FROM fase_jogo;
 
 DROP TABLE questoes_choice;
 

@@ -1,11 +1,13 @@
+from multiprocessing.connection import answer_challenge
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 
 from networkx import goldberg_radzik
+from sistemaFase01 import SistemaFase01
 from sistemaRanking import SistemaRanking
 from sistemaLogin import SistemaLogin
-from db import db
+
 import tkinter as tk
 from tkinter import END, BOTH, YES
 from utils import trata_imagem, render_imagem
@@ -16,6 +18,17 @@ from utils import render_imagem, trata_imagem, separa_tupla_em_lista  # Assuming
 from sistemaChoices import SistemaChoices
 from sistemaTF import SistemaTF
 import os
+import sqlite3
+
+    
+    
+def db(query, parameters=()):
+    db_name = os.path.join(os.path.dirname(__file__), "..", "data", "database.db")
+    with sqlite3.connect(db_name) as conn:
+        cursor = conn.cursor()
+        result = cursor.execute(query, parameters).fetchall()
+        conn.commit()
+        return result
 def marca_correta(value):
     if value == "VERDADEIRO":
         return 1
@@ -32,10 +45,10 @@ class TemplateBase:
         PATH_ICO = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "favicon.ico")
         
         self.root = tk.Tk()
-        self.root.geometry("500x500")
+        self.root.geometry("500x700")
         self.root.resizable(False, False)
         self.root.configure(bg=DARK_BLUE)
-        self.imgTratada = trata_imagem(PATH1, 500, 500)
+        self.imgTratada = trata_imagem(PATH1, 500, 700)
         self.imgRenderizada = render_imagem(self.imgTratada)
         self.root.iconbitmap(PATH_ICO)
         
@@ -206,9 +219,9 @@ class TemplateBase:
         self.root.mainloop()
         
         
-    def buildAdminRegister(self):
+    def buildAdminRegister(self, idAdmin):
         self.buildTemplateBase()
-        
+        self.idAdmin= idAdmin
         DARK_BLUE = "#242231"
 
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title1.png")
@@ -240,7 +253,7 @@ class TemplateBase:
         self.input_password_2 = tk.Entry(self.grid_area_3, show="*")
         self.input_recovery_answer = tk.Entry(self.grid_area_3)
         
-        self.btn_registerStudent = tk.Button(self.grid_area_3, text="CADASTRAR", bg="ORANGE", fg="WHITE", command=lambda: self.pressRegister(self.input_email_institucional.get(), self.input_password_1.get(), self.input_password_2.get(), self.input_recovery_answer.get()))
+        self.btn_registerStudent = tk.Button(self.grid_area_3, text="CADASTRAR", bg="ORANGE", fg="WHITE", command=lambda: self.pressRegisterAdmin(self.input_email_institucional.get(), self.input_password_1.get(), self.input_password_2.get(), self.input_recovery_answer.get()))
         
         self.grid_container.place(relx=0.1, rely=0.12, relwidth=0.8, relheight=0.75)
         self.grid_area_1.place(relx=0, rely=0, relwidth=0.3, relheight=1)
@@ -476,25 +489,54 @@ class TemplateBase:
         self.root.mainloop()
     def buildTrueOrFalse(self):
         self.buildTemplateBase()
+        
         DARK_BLUE = "#242231"
-
+        self.fase_01 = SistemaFase01()
+        self.questions_fase_01 = self.loadQuestions(db)
+        
+        self.current_question = 0
+        self.current_answer = 0
+        
+        self.question = self.questions_fase_01[self.current_question]
+        self.question_text = self.wrap_text(self.question[1][1], 50)
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title0.png")
         PATH2 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "avatar-A.png")
         self.img1Tratada = trata_imagem(PATH2, 250, 250)
         self.img1Renderizada = render_imagem(self.img1Tratada)
         self.titleTratada = trata_imagem(PATH1, 250, 50)
         self.titleRenderizada = render_imagem(self.titleTratada)
-        
+       
         self.grid_container = tk.Frame(self.root, bg=DARK_BLUE)
         self.grid_area_1 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         self.grid_area_2 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         self.grid_area_3 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         
+        question_text = self.wrap_text(self.question_text[0].format(self.current_question), 25)  # Assuming wrap_text wraps text at 50 characters
+        self.label_question = tk.Label(self.grid_area_2, text=question_text, bg=DARK_BLUE, fg="ORANGE", wraplength=250, justify="left")
+        
+        self.btn_true = tk.Button(self.grid_area_3, bg="GREENYELLOW", fg="BLACK", text="VERDADEIRO", command=lambda: self.checkAnswer(1, 1))
+        self.btn_false = tk.Button(self.grid_area_3, bg="RED", fg="BLACK", text="FALSO", command=lambda: self.checkAnswer(0, 1))
+
         self.grid_container.place(relx=0.1, rely=0.12, relwidth=0.8, relheight=0.75)
         self.grid_area_1.place(relx=0, rely=0, relwidth=0.3, relheight=1)
-        self.grid_area_2.place(relx=0.3, rely=0, relwidth=0.7, relheight=0.3)  
-        self.grid_area_3.place(relx=0.3, rely=0.3, relwidth=0.7, relheight=0.7) 
-        self.root.mainloop()    
+        self.grid_area_2.place(relx=0.3, rely=0, relwidth=0.7, relheight=0.3)
+        self.grid_area_3.place(relx=0.3, rely=0.3, relwidth=0.7, relheight=0.7)
+        self.label_question.place(relx=0.5, rely=0.5, anchor=tk.CENTER, relwidth=0.8)
+        self.btn_true.place(relx=0.7 , rely=0.7)
+        self.btn_false.place(relx=0.2 , rely=0.7)
+
+        self.root.mainloop()
+    def checkAnswer(self, answer, correct_answer):
+        if answer == correct_answer:
+            
+            return messagebox.showinfo("Resposta Certa", "Resposta Certa!")
+        else:
+            return messagebox.showerror("Resposta Errada", "Resposta Errada!")
+    def checkAnswer2(self, answer, correct_answer):
+        if answer == correct_answer:
+            return messagebox.showinfo("Resposta Certa", "Resposta Certa!")
+        else:
+            return messagebox.showerror("Resposta Errada", "Resposta Errada!")
 
     def buildAddTrueOrFalse(self, idTeacher):
         self.buildTemplateBase()
@@ -553,7 +595,22 @@ class TemplateBase:
     def buildChoices(self):
         self.buildTemplateBase()
         DARK_BLUE = "#242231"
+        self.questions_fase_02 = self.loadChoices(db)
+        self.q1_set = self.questions_fase_02[0]
+        print(self.q1_set)
+        self.set_1 = [self.q1_set[0][0], self.q1_set[0][1], self.q1_set[0][2], self.q1_set[0][3], self.q1_set[0][4], self.q1_set[0][5], self.q1_set[0][6], self.q1_set[0][7], self.q1_set[0][8], self.q1_set[0][9], self.q1_set[0][10], self.q1_set[0][11]]
+        self.set_2 = [self.q1_set[1][0], self.q1_set[1][1], self.q1_set[1][2], self.q1_set[1][3], self.q1_set[1][4], self.q1_set[1][5], self.q1_set[1][6], self.q1_set[1][7], self.q1_set[1][8], self.q1_set[1][9], self.q1_set[1][10], self.q1_set[1][11]]
+        self.set_3 = [self.q1_set[2][0], self.q1_set[2][1], self.q1_set[2][2], self.q1_set[2][3], self.q1_set[2][4], self.q1_set[2][5], self.q1_set[2][6], self.q1_set[2][7], self.q1_set[2][8], self.q1_set[2][9], self.q1_set[2][10], self.q1_set[2][11]]
+        self.set_4 = [self.q1_set[3][0], self.q1_set[3][1], self.q1_set[3][2], self.q1_set[3][3], self.q1_set[3][4], self.q1_set[3][5], self.q1_set[3][6], self.q1_set[3][7], self.q1_set[3][8], self.q1_set[3][9], self.q1_set[3][10], self.q1_set[3][11]]
+        self.set_5 = [self.q1_set[4][0], self.q1_set[4][1], self.q1_set[4][2], self.q1_set[4][3], self.q1_set[4][4], self.q1_set[4][5], self.q1_set[4][6], self.q1_set[4][7], self.q1_set[4][8], self.q1_set[4][9], self.q1_set[4][10], self.q1_set[4][11]]
 
+        print(self.set_5)
+
+        
+        
+        
+        
+        
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title0.png")
         PATH2 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "avatar-A.png")
         self.img1Tratada = trata_imagem(PATH2, 250, 250)
@@ -570,6 +627,19 @@ class TemplateBase:
         self.grid_area_1.place(relx=0, rely=0, relwidth=0.3, relheight=1)
         self.grid_area_2.place(relx=0.3, rely=0, relwidth=0.7, relheight=0.3)  
         self.grid_area_3.place(relx=0.3, rely=0.3, relwidth=0.7, relheight=0.7) 
+        
+        self.render_view = 0
+        
+        if  self.render_view == 0: 
+            self.render_set(self.grid_area_1, self.grid_area_2, self.grid_area_3,  self.set_1)
+        elif self.render_view == 1:
+            self.render_set(self.grid_area_1, self.grid_area_2, self.grid_area_3,  self.set_2)
+        elif self.render_view == 2:
+            self.render_set(self.grid_area_1, self.grid_area_2, self.grid_area_3,  self.set_3)
+        else:
+            self.render_set(self.grid_area_1, self.grid_area_2, self.grid_area_3,  self.set_4)
+            
+
         self.root.mainloop()    
     
     def buildAddChoices(self, idTeacher):
@@ -657,7 +727,23 @@ class TemplateBase:
                 return messagebox.showinfo('Sucesso', 'Registrado com sucesso')
             except ValueError:
                 return messagebox.showerror('ERROR', 'Erro ao registrar usuario')
-    
+    def pressRegisterAdmin(self, d1, d2, d3, d4):
+        email_institucional = d1
+        password_1 = d2
+        password_2 = d3
+        recovery_answer = d4
+        
+        if email_institucional == '' or password_1 == '' or password_2 == '' or recovery_answer == '':
+            return messagebox.showerror('Erro', 'Todos os campos devem estar preenchidos')
+        elif password_1 != password_2:
+            return messagebox.showerror('Erro', 'As senhas devem ser iguais')
+        else:
+            estudante = SistemaCadastro(email_institucional, password_1, recovery_answer)
+            try:
+                estudante.generateUserAdminDb(db)
+                return messagebox.showinfo('Sucesso', 'Registrado com sucesso')
+            except ValueError:
+                return messagebox.showerror('ERROR', 'Erro ao registrar usuario')    
     def pressLogin(self, d1, d2):
         self.email_institucional = d1
         self.password = hasheando(d2)
@@ -703,10 +789,10 @@ class TemplateBase:
         self.template = TemplateBase()
         self.template.buildStudentRegister()
 
-    def goToRegisterAdmin(self):
+    def goToRegisterAdmin(self, idAdmin):
         self.root.destroy()
         self.template = TemplateBase()
-        self.template.buildAdminRegister()
+        self.template.buildAdminRegister(idAdmin)
         
     def goToRegisterTeacher(self, idAdmin):
         self.root.destroy()
@@ -785,8 +871,69 @@ class TemplateBase:
             except Exception as e:
                 messagebox.showerror('Error', f'Erro ao salvar escolha: {str(e)}')
 
+    def loadQuestions(self, db):
+        query = "SELECT * FROM questoes_verdadeiro_ou_falso ORDER BY updated_at DESC LIMIT 10"
+        result = [db(query)]
     
+        return result
+    
+    def loadChoices(self, db):
+        query = "SELECT * FROM questoes_choice ORDER BY updated_at DESC LIMIT 10"
+        result = [db(query)]
+        return result
+
+    
+    
+    def wrap_text(self, text, max_words=15):
+        words = text.split()
+        wrapped_lines = []
+        current_line = []
+        for word in words:
+            current_line.append(word)
+            if len(current_line) >= max_words:
+                wrapped_lines.append(" ".join(current_line))
+                current_line = []
+        if current_line:
+            wrapped_lines.append(" ".join(current_line))
+        return wrapped_lines
+    
+    def render_set(self, gridArea, gridArea1, gridArea2, setData):
+        self.gridArea = gridArea
+        self.gridArea1 = gridArea1
+        self.gridArea2 = gridArea2
+        self.id = setData[0]
+        self.enunciado = setData[1] 
+        self.a = setData[2]
+        self.b = setData[3]
+        self.c = setData[4]
+        self.d = setData[5]
+        self.e = setData[6]
+        self.answer = setData[7]
+        self.explicacao = setData[8]
+        self.author = setData[9]
+        self.fase = setData[10]
+        self.last_updated = setData[11]
+        
+        
+        self.labelEnunciado = tk.Label(self.gridArea, text=self.enunciado, font=("Arial", 10), bg="blue", fg="white", wraplength=100)
+        self.btnA = tk.Button(self.gridArea1, text=self.a, font=("Arial", 10), bg="ORANGE", fg="black", wraplength=200, command=lambda: self.checkAnswer2("a", self.answer))
+        self.btnB = tk.Button(self.gridArea2, text=self.b, font=("Arial", 10), bg="ORANGE", fg="black", wraplength=200, command=lambda: self.checkAnswer2("b", self.answer))
+        self.btnC = tk.Button(self.gridArea2, text=self.c, font=("Arial", 10), bg="ORANGE", fg="black", wraplength=200, command=lambda: self.checkAnswer2("c", self.answer))
+        self.btnD = tk.Button(self.gridArea2, text=self.d, font=("Arial", 10), bg="ORANGE", fg="black", wraplength=200, command=lambda: self.checkAnswer2("d", self.answer))
+        self.btnE = tk.Button(self.gridArea2, text=self.e, font=("Arial", 10), bg="ORANGE", fg="black", wraplength=200, command=lambda: self.checkAnswer2("e", self.answer))
+
+        
+
+        self.labelEnunciado.pack(side="top", fill="both", expand=True)
+        self.btnA.pack(side="top", fill="both", expand=True)
+        self.btnB.pack(side="top", fill="both", expand=True)
+        self.btnC.pack(side="top", fill="both", expand=True)
+        self.btnD.pack(side="top", fill="both", expand=True)
+        self.btnE.pack(side="top", fill="both", expand=True)
+        
+        
+        
 # Example usage
 template = TemplateBase()
 #template.buildAddTrueOrFalse("c4697db7-876c-4323-9f21-2bad9d675ba1")
-template.buildHomePage()
+template.buildChoices()

@@ -66,7 +66,7 @@ class SistemaCadastro:
         parameters = (idScore, 0, self.idProprio)
         return db(query, parameters)
     
-    def generateAdminDb(self):
+    def generateAdminDb(self, db):
         query = """INSERT INTO usuario_admin (id, usuario_id, is_active) 
                    VALUES (?, ?, ?)"""   
         parameters = (self.idProprio, self.id, 1)
