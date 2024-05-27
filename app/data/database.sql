@@ -14,11 +14,11 @@ CREATE TABLE usuarios(
 INSERT INTO usuarios(
     id, email_institucional, username, password, recovery_question, recovery_answer, role
 ) VALUES (
-    "cdb0660a-ed92-49c8-bb08-f77523428a67", "estudante.teste@jpiaget.g12.br", "estudante-teste", "!AAUG!*321cbA!AAUG!", "Nome do seu PET?", "PET-ESTUDANTE", "ESTUDANTES"
+    "cdb0660a-ed92-49c8-bb08-f77523428a67", "estudante.teste@jpiaget.g12.br", "estudante-teste", "!AAUG!*321cbA!AAUG!", "Registro Estudantil - RE", "G12-24-00011" ,"ESTUDANTES"
 ),(
-    "4ca064c7-3df0-4c27-b670-b8928c431f82", "admin.teste@jpiaget.com.br", "admin-teste", "!AAUG!*321cbA!AAUG!", "Nome do seu PET?", "PET-ADMINISTRADOR", "ADMINISTRADORES"
+    "4ca064c7-3df0-4c27-b670-b8928c431f82", "admin.teste@jpiaget.com.br", "admin-teste", "!AAUG!*321cbA!AAUG!", "Registro Administrativo - RA", "ADMIN-24-00012", "ADMINISTRADORES"
 ),(
-    "c4697db7-876c-4323-9f21-2bad9d675ba1", "pro.teste@jpiaget.pro.br", "pro-teste", "!AAUG!*321cbA!AAUG!!", "Nome do seu PET?", "PET-PROFESSOR", "PROFESSORES"
+    "c4697db7-876c-4323-9f21-2bad9d675ba1", "pro.teste@jpiaget.pro.br", "pro-teste", "!AAUG!*321cbA!AAUG!!", "Registro Professor - RP", "PROF-24-00013", "PROFESSORES"
 );
 
 SELECT * FROM usuarios;
@@ -372,7 +372,7 @@ DROP TABLE score_total;
 
 DROP TABLE fase_jogo;
 
-SELECT * FROM questoes_choice;
+DROP TABLE questoes_choice;
 
 DROP TABLE questoes_verdadeiro_ou_falso;
 
