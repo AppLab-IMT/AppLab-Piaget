@@ -936,4 +936,4 @@ class TemplateBase:
 # Example usage
 template = TemplateBase()
 #template.buildAddTrueOrFalse("c4697db7-876c-4323-9f21-2bad9d675ba1")
-template.buildChoices()
+template.buildHomePage()
