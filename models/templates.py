@@ -1,22 +1,4 @@
-from multiprocessing.connection import answer_challenge
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
-
-from networkx import goldberg_radzik
-from sistemaFase01 import SistemaFase01
-from sistemaRanking import SistemaRanking
-from sistemaLogin import SistemaLogin
-
-import tkinter as tk
-from tkinter import END, BOTH, YES
-from utils import trata_imagem, render_imagem
-
-from sistemaCadastro import SistemaCadastro
-from hash_manager import hasheando  # Assuming hasheando is a required function
-from utils import render_imagem, trata_imagem, separa_tupla_em_lista  # Assuming these functions are correctly defined in utils module
-from sistemaChoices import SistemaChoices
-from sistemaTF import SistemaTF
+from usuarios import Usuarios
 import os
 import sqlite3
 
@@ -29,11 +11,15 @@ def db(query, parameters=()):
         result = cursor.execute(query, parameters).fetchall()
         conn.commit()
         return result
+    
+    
 def marca_correta(value):
     if value == "VERDADEIRO":
         return 1
     else:
         return 0
+    
+    
 class TemplateBase:
     def __init__(self):
         self.root = None
@@ -85,12 +71,14 @@ class TemplateBase:
         
         self.btn_login = tk.Button(self.grid_area_1, text="Login" , width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToLogin())
         self.btn_registerStudent = tk.Button(self.grid_area_1, text="Matricula",  width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToRegisterStudent(db))
+        self.btn_project = tk.Button(self.grid_area_1, text="O Projeto", width=10, height=1, bg="ORANGE", border=None, fg=DARK_BLUE, command=lambda: self.goToHome())
         
         self.label_image = tk.Label(self.grid_area_3, image=self.img1Renderizada, bg=DARK_BLUE)
         self.label_title = tk.Label(self.grid_area_2, image=self.titleRenderizada, bg=DARK_BLUE)
        
         self.grid_container.place(relx=0.1, rely=0.12, relwidth=0.8, relheight=0.75)
         self.grid_area_1.place(relx=0, rely=0, relwidth=0.3, relheight=1)
+        self.btn_project.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
         self.btn_registerStudent.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         self.btn_login.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
 
@@ -162,8 +150,7 @@ class TemplateBase:
         
     def buildStudentRegister(self):
         self.buildTemplateBase()
-        self.DARK_BLUE = "#242231"
-        self.LIGHT_ORANGE = "orange"
+        DARK_BLUE = "#242231"
 
         PATH1 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "title1.png")
         PATH2 = os.path.join(os.path.dirname(__file__), "..", "assets", "images", "btn01.png")
@@ -172,19 +159,19 @@ class TemplateBase:
         self.titleTratada = trata_imagem(PATH1, 250, 50)
         self.titleRenderizada = render_imagem(self.titleTratada)
         
-        self.grid_container = tk.Frame(self.root, bg=self.DARK_BLUE)
+        self.grid_container = tk.Frame(self.root, bg=DARK_BLUE)
         self.grid_area_1 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         self.grid_area_2 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         self.grid_area_3 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         self.grid_area_4 = tk.Frame(self.grid_container, bg=DARK_BLUE)
         
-        self.btn_project = tk.Button(self.grid_area_1, text="AppLab", bg=self.LIGHT_ORANGE, border=None, command=lambda: self.goToHome())
-        self.btn_login = tk.Button(self.grid_area_1, text="Login", bg=self.LIGHT_ORANGE)
-        self.btn_registerStudent = tk.Button(self.grid_area_3, text="Matricula", bg=self.LIGHT_ORANGE  )
-      
-        self.label_title = tk.Label(self.grid_area_2, image=self.titleRenderizada, bg=self.LIGHT_ORANGE)
+        self.btn_project = tk.Button(self.grid_area_1, text="AppLab", bg="#476475", border=None, command=lambda: self.goToHome())
+        self.btn_login = tk.Button(self.grid_area_1, text="Login")
+        self.btn_registerStudent = tk.Button(self.grid_area_3, text="Matricula")
         
-        self.label_email_institucional = tk.Label(self.grid_area_3, text="Email institucional", bg=LIGHT_ORANGE, fg=DARK_BLUE)
+        self.label_title = tk.Label(self.grid_area_2, image=self.titleRenderizada, bg=DARK_BLUE)
+        
+        self.label_email_institucional = tk.Label(self.grid_area_3, text="Email institucional", bg=DARK_BLUE, fg="ORANGE")
         self.label_password_1 = tk.Label(self.grid_area_3, text="Senha Usuário", bg=DARK_BLUE, fg="ORANGE")
         self.label_password_2 = tk.Label(self.grid_area_3, text="Confirme a senha", bg=DARK_BLUE, fg="ORANGE")
         self.label_question_recovery = tk.Label(self.grid_area_3, text="RE", bg=DARK_BLUE, fg="ORANGE")
